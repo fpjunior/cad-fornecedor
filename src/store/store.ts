@@ -70,4 +70,5 @@ export const useStoreTransaction = create(
     }),
     { name: "transaction-list", storage: createJSONStorage(() => AsyncStorage) }
   )
+  
 );
