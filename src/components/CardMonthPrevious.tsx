@@ -8,8 +8,8 @@ export default function CardMonthPrevious() {
   const currentDate = DateTime.local(); // Obtiene la fecha y hora actual
   const previousMonth = currentDate.minus({ months: 1 }); // Resta un mes a la fecha actual
 
-  const previousMonthName = previousMonth.setLocale("es").toFormat("LLL"); // Obtiene el nombre del mes anterior
-  const newDate = previousMonth.setLocale("es").toFormat("LLL y");
+  const previousMonthName = previousMonth.setLocale("pt-BR").toFormat("LLL"); // Obtiene el nombre del mes anterior
+  const newDate = previousMonth.setLocale("pt-BR").toFormat("LLL y");
 
   //filtro toda la actividad del mes pasado
   const filterPreviousMonth = data.filter(
@@ -23,7 +23,7 @@ export default function CardMonthPrevious() {
 
   //sumo los ingresos del mes pasado
   const totalIncomePreviousMonth = filterIncomePreviousMonth.reduce(
-    (accumulador, currentValue) => accumulador + Number(currentValue.money),
+    (accumulador, currentValue) => accumulador + Number(currentValue.categoria),
     0
   );
 
@@ -34,7 +34,7 @@ export default function CardMonthPrevious() {
 
   //sumo los gastos del mes pasado
   const totalExpensePreviousMonth = filterExpensePreviousMonth.reduce(
-    (accumulador, currentValue) => accumulador + Number(currentValue.money),
+    (accumulador, currentValue) => accumulador + Number(currentValue.categoria),
     0
   );
 

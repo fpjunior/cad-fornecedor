@@ -16,6 +16,7 @@ import { useStoreTransaction } from "../store/store";
 import { currentMonth, formattedDate, getCurrentTimestamp } from "../helpers";
 import { useTransactionContext } from "../context/AppContext";
 import { useValidate } from "../helpers/validateForm";
+import { formatQuantity } from '../helpers/index';
 
 export default function ModalForm() {
   const [sent, setSent] = useState(false);
@@ -24,12 +25,16 @@ export default function ModalForm() {
     useTransactionContext();
   const [checkSelected, setCheckSelected] = useState("");
   const [inputValue, setInputValue] = useState({
-    money: "",
-    description: "",
+    // money: "",
+    // description: "",
+    nome: "",
+    categoria: "",
+    telefone: "",
+    marca: "",
   });
 
   //para validar que solo se envie un numero
-  const moneyValue = inputValue.money.replace(/[^0-9]/g, "");
+  // const moneyValue = inputValue.money.replace(/[^0-9]/g, "");
 
   const errors = useValidate(inputValue, checkSelected);
 
@@ -42,13 +47,24 @@ export default function ModalForm() {
   useEffect(() => {
     if (objectToEdit !== null) {
       setInputValue({
-        money: objectToEdit.money,
-        description: objectToEdit.description,
+        // money: objectToEdit.money,
+        // description: objectToEdit.description,
+        nome: objectToEdit.nome,
+        categoria: objectToEdit.categoria,
+        telefone: objectToEdit.telefone,
+        marca: objectToEdit.marca,
       });
       setCheckSelected(objectToEdit.transactionType);
     }
     if (!modalVisible) {
-      setInputValue({ money: "", description: "" });
+      setInputValue({ 
+        // money: "", 
+        // description: "",
+        nome: "",
+        categoria: "",
+        telefone: "",
+        marca: "", 
+      });
       setCheckSelected("");
       setSent(false);
     }
@@ -58,10 +74,10 @@ export default function ModalForm() {
     setSent(true); //para mostrar el error en la pantalla
 
     if (
-      !inputValue.description ||
-      !inputValue.money ||
-      !checkSelected ||
-      inputValue.money !== moneyValue
+      // !inputValue.description ||
+      // !inputValue.money ||
+      !checkSelected
+      // inputValue.money !== moneyValue
     )
       return;
 
@@ -79,7 +95,14 @@ export default function ModalForm() {
       );
     }
 
-    setInputValue({ money: "", description: "" });
+    setInputValue({ 
+      //  money: "",
+      //  description: "",
+       nome: "",
+       categoria: "",
+       telefone: "",
+       marca: "",
+    });
     setCheckSelected("");
     closeModal();
   };
@@ -107,10 +130,11 @@ export default function ModalForm() {
             <View>
               <Text style={styles.title}>
                 {objectToEdit !== null
-                  ? "Editar Transferencia"
-                  : "Agregar Transferencia"}
+                  ? "Editar Fornecedor"
+                  : "Cadastrar Fornecedor"}
               </Text>
-              <View>
+              {/* INPUT VALOR */}
+              {/* <View>
                 <TextInput
                   style={styles.inputAmountMoney}
                   placeholder="$10.000.00"
@@ -121,12 +145,12 @@ export default function ModalForm() {
                   onSubmitEditing={() => moneyInputRef.current?.focus()}
                 />
                 {sent && <Text style={styles.errorMoney}>{errors.money}</Text>}
-              </View>
-              <View>
+              </View> */}
+              {/* <View>
                 <View>
                   <TextInput
                     style={styles.input}
-                    placeholder="Netflix, Amazon..."
+                    placeholder="Descriçao"
                     selectionColor="#4f80c3"
                     value={inputValue.description}
                     onChangeText={(textValue) =>
@@ -147,7 +171,54 @@ export default function ModalForm() {
                     {errors.description}
                   </Text>
                 )}
+              </View> */}
+
+              {/* INPUT NOME */}
+              <View>
+                <View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Nome Fornecedor..."
+                    selectionColor="#4f80c3"
+                    value={inputValue.nome}
+                    onChangeText={(textValue) =>
+                      handleChange("nome", textValue)
+                    }
+                    ref={moneyInputRef}
+                    onSubmitEditing={() => moneyInputRef.current?.focus()}
+                  />
+                </View>
+                {sent && (
+                  <Text style={styles.errorDescription}>
+                    {errors.nome}
+                  </Text>
+                )}
               </View>
+
+                {/* INPUT CATEGORIA */}
+                <View>
+                <View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Categoria do Fornecedor"
+                    selectionColor="#4f80c3"
+                    value={inputValue.categoria}
+                    onChangeText={(textValue) =>
+                      handleChange("categoria", textValue)
+                    }
+                    ref={moneyInputRef}
+                    onSubmitEditing={() => moneyInputRef.current?.focus()}
+                  />
+             
+                </View>
+                {sent && (
+                  <Text style={styles.errorDescription}>
+                    {errors.categoria}
+                  </Text>
+                )}
+              </View>
+
+
               <View>
                 <CheckBoxForm
                   handleCheckBox={handleCheckBox}
@@ -208,8 +279,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   input: {
+    fontSize: 30,
     backgroundColor: "#fff",
-    height: 40,
+    height: 60,
     marginBottom: 22,
     borderRadius: 10,
     paddingLeft: 40,

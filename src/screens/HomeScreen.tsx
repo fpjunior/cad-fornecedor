@@ -115,7 +115,7 @@ export default function HomeScreen({ navigation }: Prop) {
                       style={styles.iconHiddenContainer}
                       activeOpacity={0.8}
                       onPress={() =>
-                        handleDeleteTransaction(item.description, item.id)
+                        handleDeleteTransaction(item.nome, item.id)
                       }
                     >
                       <AntDesign

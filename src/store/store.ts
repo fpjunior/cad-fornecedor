@@ -2,11 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Transaction } from "../interface/interfaceTransaction";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IValueInput } from "../interface/valueInput.model";
 
-interface ValueInput {
-  money: string;
-  description: string;
-}
 
 type State = {
   data: Transaction[];
@@ -14,7 +11,7 @@ type State = {
 
 type Action = {
   addTransaction: (
-    value: ValueInput,
+    value: IValueInput,
     transactionType: string,
     id: string,
     date: string,
@@ -22,7 +19,7 @@ type Action = {
   ) => void;
   deleteTransaction: (id: string) => void;
   updateTransaction: (
-    newItem: ValueInput | undefined,
+    newItem: IValueInput | undefined,
     itemId: string | null,
     transactionType: string
   ) => void;
@@ -35,7 +32,7 @@ export const useStoreTransaction = create(
 
       //agregar un elemento
       addTransaction: (
-        value: ValueInput,
+        value: IValueInput,
         transactionType: string,
         id: string,
         date: string,
@@ -58,7 +55,7 @@ export const useStoreTransaction = create(
 
       //editar un elemento
       updateTransaction: (
-        newItem: ValueInput | undefined,
+        newItem: IValueInput | undefined,
         itemId: string | null,
         transactionType: string
       ) =>
