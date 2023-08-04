@@ -6,6 +6,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Button,
+  Alert,
+  Share,
+  Image,
+  FlatList
 } from "react-native";
 import { Color } from "../constants/theme";
 import { Entypo } from "@expo/vector-icons";
@@ -17,6 +22,28 @@ import { currentMonth, formattedDate, getCurrentTimestamp } from "../helpers";
 import { useTransactionContext } from "../context/AppContext";
 import { useValidate } from "../helpers/validateForm";
 import { formatQuantity } from '../helpers/index';
+import ContactSelector from "./Contacts";
+
+
+// PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+//   title: 'Contatos',
+//   message: 'Esse App gostaria de ter acesso a sua lista de contatos',
+//   buttonPositive: 'Por favor, aceite',
+// })
+//   .then((res) => {
+//       console.log('Permission: ', res);
+//       Contacts.requestPermissionsAsync()
+//           .then((contacts: any) => {
+//               // work with contacts
+//               console.log(contacts);
+//           })
+//           .catch((e: any) => {
+//               console.log(e);
+//           });
+//   })
+//   .catch((error) => {
+//       console.error('Permission error: ', error);
+//   });
 
 export default function ModalForm() {
   const [sent, setSent] = useState(false);
@@ -45,6 +72,7 @@ export default function ModalForm() {
   };
 
   useEffect(() => {
+    
     if (objectToEdit !== null) {
       setInputValue({
         // money: objectToEdit.money,
@@ -57,13 +85,13 @@ export default function ModalForm() {
       setCheckSelected(objectToEdit.transactionType);
     }
     if (!modalVisible) {
-      setInputValue({ 
+      setInputValue({
         // money: "", 
         // description: "",
         nome: "",
         categoria: "",
         telefone: "",
-        marca: "", 
+        marca: "",
       });
       setCheckSelected("");
       setSent(false);
@@ -95,13 +123,13 @@ export default function ModalForm() {
       );
     }
 
-    setInputValue({ 
+    setInputValue({
       //  money: "",
       //  description: "",
-       nome: "",
-       categoria: "",
-       telefone: "",
-       marca: "",
+      nome: "",
+      categoria: "",
+      telefone: "",
+      marca: "",
     });
     setCheckSelected("");
     closeModal();
@@ -172,6 +200,7 @@ export default function ModalForm() {
                   </Text>
                 )}
               </View> */}
+              <View><ContactSelector/></View>
 
               {/* INPUT NOME */}
               <View>
@@ -195,8 +224,8 @@ export default function ModalForm() {
                 )}
               </View>
 
-                {/* INPUT CATEGORIA */}
-                <View>
+              {/* INPUT CATEGORIA */}
+              <View>
                 <View>
                   <TextInput
                     style={styles.input}
@@ -209,7 +238,7 @@ export default function ModalForm() {
                     ref={moneyInputRef}
                     onSubmitEditing={() => moneyInputRef.current?.focus()}
                   />
-             
+
                 </View>
                 {sent && (
                   <Text style={styles.errorDescription}>
