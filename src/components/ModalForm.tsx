@@ -6,11 +6,6 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Button,
-  Alert,
-  Share,
-  Image,
-  FlatList
 } from "react-native";
 import { Color } from "../constants/theme";
 import { Entypo } from "@expo/vector-icons";
@@ -22,9 +17,15 @@ import { currentMonth, formattedDate, getCurrentTimestamp } from "../helpers";
 import { useTransactionContext } from "../context/AppContext";
 import { useValidate } from "../helpers/validateForm";
 import { formatQuantity } from '../helpers/index';
-import ContactSelector from "./Contacts";
-
-
+import * as Contacts from 'expo-contacts';
+import { PermissionsAndroid } from 'react-native';
+import ModalContacts from "./ModalContacts";
+interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  image?: string;
+}
 // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
 //   title: 'Contatos',
 //   message: 'Esse App gostaria de ter acesso a sua lista de contatos',
@@ -51,32 +52,35 @@ export default function ModalForm() {
   const { itemId, objectToEdit, modalVisible, closeModal } =
     useTransactionContext();
   const [checkSelected, setCheckSelected] = useState("");
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [inputValue, setInputValue] = useState({
-    // money: "",
-    // description: "",
     nome: "",
     categoria: "",
     telefone: "",
     marca: "",
   });
-
-  //para validar que solo se envie un numero
-  // const moneyValue = inputValue.money.replace(/[^0-9]/g, "");
-
+  const [modalVisible2, setModalVisible2] = useState(false);
   const errors = useValidate(inputValue, checkSelected);
-
   const moneyInputRef = useRef<null | TextInput>(null);
+
+  const handleOpenModal2 = () => {
+    setModalVisible2(true);
+  };
+  const handleCloseModal2 = () => {
+    setModalVisible2(false);
+  };
+
+
 
   const handleChange = (valueName: string, textValue: string) => {
     setInputValue({ ...inputValue, [valueName]: textValue });
   };
 
   useEffect(() => {
-    
+    setModalVisible2(false);
+
     if (objectToEdit !== null) {
       setInputValue({
-        // money: objectToEdit.money,
-        // description: objectToEdit.description,
         nome: objectToEdit.nome,
         categoria: objectToEdit.categoria,
         telefone: objectToEdit.telefone,
@@ -86,8 +90,6 @@ export default function ModalForm() {
     }
     if (!modalVisible) {
       setInputValue({
-        // money: "", 
-        // description: "",
         nome: "",
         categoria: "",
         telefone: "",
@@ -99,21 +101,12 @@ export default function ModalForm() {
   }, [modalVisible]);
 
   const handleSubmit = () => {
-    setSent(true); //para mostrar el error en la pantalla
-
-    if (
-      // !inputValue.description ||
-      // !inputValue.money ||
-      !checkSelected
-      // inputValue.money !== moneyValue
-    )
+    setSent(true); 
+    if (!checkSelected)
       return;
-
     if (objectToEdit !== null) {
-      //si hay un objeto para editar, edito el item.
       updateTransaction(inputValue, itemId, checkSelected);
     } else {
-      //sino agrego un item nuevo
       addTransaction(
         inputValue,
         checkSelected,
@@ -124,8 +117,6 @@ export default function ModalForm() {
     }
 
     setInputValue({
-      //  money: "",
-      //  description: "",
       nome: "",
       categoria: "",
       telefone: "",
@@ -161,46 +152,12 @@ export default function ModalForm() {
                   ? "Editar Fornecedor"
                   : "Cadastrar Fornecedor"}
               </Text>
-              {/* INPUT VALOR */}
-              {/* <View>
-                <TextInput
-                  style={styles.inputAmountMoney}
-                  placeholder="$10.000.00"
-                  selectionColor="#4f80c3"
-                  keyboardType="numeric"
-                  value={inputValue.money}
-                  onChangeText={(textValue) => handleChange("money", textValue)}
-                  onSubmitEditing={() => moneyInputRef.current?.focus()}
-                />
-                {sent && <Text style={styles.errorMoney}>{errors.money}</Text>}
-              </View> */}
-              {/* <View>
-                <View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Descriçao"
-                    selectionColor="#4f80c3"
-                    value={inputValue.description}
-                    onChangeText={(textValue) =>
-                      handleChange("description", textValue)
-                    }
-                    ref={moneyInputRef}
-                    onSubmitEditing={() => moneyInputRef.current?.focus()}
-                  />
-                  <Entypo
-                    name="list"
-                    size={18}
-                    color={Color.icon}
-                    style={styles.iconListInput}
-                  />
-                </View>
-                {sent && (
-                  <Text style={styles.errorDescription}>
-                    {errors.description}
-                  </Text>
-                )}
-              </View> */}
-              <View><ContactSelector/></View>
+             
+              <TouchableOpacity style={styles.button} onPress={handleOpenModal2}>
+                <Text>Cadastrar através de um contato</Text>
+              </TouchableOpacity>
+              <ModalContacts showModal={modalVisible2} onCloseModal={handleCloseModal2}/>
+              {/* {modalContacts()} */}
 
               {/* INPUT NOME */}
               <View>
@@ -247,7 +204,6 @@ export default function ModalForm() {
                 )}
               </View>
 
-
               <View>
                 <CheckBoxForm
                   handleCheckBox={handleCheckBox}
@@ -271,9 +227,18 @@ export default function ModalForm() {
       </KeyboardAwareScrollView>
     </Modal>
   );
-}
+                }
+
 
 const styles = StyleSheet.create({
+
+
+  contactItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+
   container: {
     flex: 1,
     backgroundColor: Color.primary,
