@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Color } from "../constants/theme";
 import { Entypo } from "@expo/vector-icons";
@@ -101,7 +102,7 @@ export default function ModalForm() {
   }, [modalVisible]);
 
   const handleSubmit = () => {
-    setSent(true); 
+    setSent(true);
     if (!checkSelected)
       return;
     if (objectToEdit !== null) {
@@ -130,6 +131,18 @@ export default function ModalForm() {
     setCheckSelected(value);
   };
 
+  const handleSelectContact = (contact: Contact | null) => {
+
+    setSelectedContact(contact);
+
+    setInputValue({
+      nome: contact?.name ?? '',
+      categoria: "",
+      telefone: contact?.phone ?? '',
+      marca: "",
+    });
+  };
+
   return (
     <Modal visible={modalVisible} animationType="slide">
       <KeyboardAwareScrollView
@@ -152,12 +165,23 @@ export default function ModalForm() {
                   ? "Editar Fornecedor"
                   : "Cadastrar Fornecedor"}
               </Text>
-             
-              <TouchableOpacity style={styles.button} onPress={handleOpenModal2}>
-                <Text>Cadastrar através de um contato</Text>
-              </TouchableOpacity>
-              <ModalContacts showModal={modalVisible2} onCloseModal={handleCloseModal2}/>
-              {/* {modalContacts()} */}
+
+              <View>
+                <TouchableOpacity style={styles.buttonContact} onPress={handleOpenModal2}>
+                  <Text style={styles.buttonTextContact}>Cadastrar através de um contato</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.containerImage}>
+                <Image
+                  style={styles.storyUserImage}
+                  source={{
+                    uri: selectedContact?.image ??
+                      'https://t4.ftcdn.net/jpg/02/24/86/95/240_F_224869519_aRaeLneqALfPNBzg0xxMZXghtvBXkfIA.jpg',
+                  }}
+                />
+              </View>
+              <ModalContacts showModal={modalVisible2} onCloseModal={handleCloseModal2} onSelectContact={handleSelectContact} />
 
               {/* INPUT NOME */}
               <View>
@@ -169,6 +193,28 @@ export default function ModalForm() {
                     value={inputValue.nome}
                     onChangeText={(textValue) =>
                       handleChange("nome", textValue)
+                    }
+                    ref={moneyInputRef}
+                    onSubmitEditing={() => moneyInputRef.current?.focus()}
+                  />
+                </View>
+                {sent && (
+                  <Text style={styles.errorDescription}>
+                    {errors.nome}
+                  </Text>
+                )}
+              </View>
+
+              {/* INPUT Telefone */}
+              <View>
+                <View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Telefone do Fornecedor..."
+                    selectionColor="#4f80c3"
+                    value={inputValue.telefone}
+                    onChangeText={(textValue) =>
+                      handleChange("telefone", textValue)
                     }
                     ref={moneyInputRef}
                     onSubmitEditing={() => moneyInputRef.current?.focus()}
@@ -227,12 +273,33 @@ export default function ModalForm() {
       </KeyboardAwareScrollView>
     </Modal>
   );
-                }
-
+}
 
 const styles = StyleSheet.create({
-
-
+  buttonContact: {
+    backgroundColor: '#4f80c3',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  buttonTextContact: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  containerImage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 30,
+    paddingTop: 30,
+  },
+  storyUserImage: {
+    height: 120,
+    width: 120,
+    borderRadius: 100,
+  },
   contactItem: {
     padding: 10,
     borderBottomWidth: 1,
